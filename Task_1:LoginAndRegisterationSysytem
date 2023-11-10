@@ -1,0 +1,93 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using namespace std;
+
+struct User {
+    string username;
+    string password;
+};
+
+void registerUser() {
+    User newUser;
+    cout << "Enter a username: ";
+    cin >> newUser.username;
+
+    ifstream usersFile("users.txt");
+    string username;
+    bool exists = false;
+
+    while (usersFile >> username) { //reads and store in username
+        if (username == newUser.username) {
+            exists = true;
+            break;
+        }
+    }
+    usersFile.close();
+    // check if user exists
+    if (exists) {
+        cout << "User already exists. Please try a different username." << endl;
+        return;
+    }
+
+    cout << "Enter a password: ";
+    cin >> newUser.password;
+
+    ofstream outFile("users.txt", ios::app);
+    outFile << newUser.username << " " << newUser.password << endl;
+    outFile.close();
+    cout << "Registration successful!" << endl;
+}
+
+void loginUser() {
+    User user;
+    cout << "Enter your username: ";
+    cin >> user.username;
+    cout << "Enter your password: ";
+    cin >> user.password;
+
+    ifstream usersFile("users.txt");
+    string username, password;
+    bool loggedIn = false;
+
+    while (usersFile >> username >> password) {
+        if (username == user.username && password == user.password) {
+            loggedIn = true;
+            break;
+        }
+    }
+    usersFile.close();
+
+    if (loggedIn) {
+        cout << "Login successful! Welcome, " << user.username << "!" << endl;
+    } else {
+        cout << "Invalid username or password. Please try again." << endl;
+    }
+}
+
+int main() {
+    int choice;
+    do {
+        cout << "Menu:\n1. Register\n2. Login\n3. Exit\nEnter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                registerUser();
+                break;
+            case 2:
+                loginUser();
+                break;
+            case 3:
+                cout << "Exiting the program. Goodbye!" << endl;
+                break;
+            default:
+                cout << "Invalid choice. Please enter a valid option." << endl;
+                break;
+        }
+    } while (choice != 3);
+
+    return 0;
+}
+
